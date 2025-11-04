@@ -25,7 +25,7 @@ class Renderer {
      * Carrega todas as imagens necessárias
      */
     loadImages() {
-        const assetPath = '../assets/';
+        const assetPath = 'assets/';
         const assetNames = ['submarine', 'shark', 'squid', 'angler', 'viper', 'bubble', 'rock'];
 
         assetNames.forEach(name => {
