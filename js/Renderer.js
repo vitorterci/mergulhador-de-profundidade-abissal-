@@ -8,6 +8,17 @@ class Renderer {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.ctx.imageSmoothingEnabled = false;
+
+        // Mapeamento de emojis para elementos do jogo
+        this.emojiMap = {
+            submarine: '🚢',
+            shark: '🦈',
+            squid: '🦑',
+            angler: '🎣',
+            viper: '🐍',
+            bubble: '🫧',
+            rock: '🪨'
+        };
         
         // Imagens carregadas
         this.images = {};
@@ -22,22 +33,11 @@ class Renderer {
     }
 
     /**
-     * Carrega todas as imagens necessárias
+     * Carrega todas as imagens necessárias (agora ignorado, mas mantido para compatibilidade)
      */
     loadImages() {
-        const assetPath = 'assets/';
-        const assetNames = ['submarine', 'shark', 'squid', 'angler', 'viper', 'bubble', 'rock'];
-
-        assetNames.forEach(name => {
-            const img = new Image();
-            img.src = `${assetPath}${name}.png`;
-            img.onload = () => {
-                this.images[name] = img;
-            };
-            img.onerror = () => {
-                console.warn(`Falha ao carregar imagem: ${name}.png`);
-            };
-        });
+        // Não carrega imagens, pois usaremos emojis
+        console.log('Emojis ativados! Ignorando carregamento de imagens.');
     }
 
     /**
@@ -118,14 +118,16 @@ class Renderer {
      * @param {Array<GameObject>} bubbles - Array de bolhas
      */
     drawBubbles(bubbles) {
+        this.ctx.font = '30px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+
         bubbles.forEach(bubble => {
-            if (this.images['bubble']) {
-                this.ctx.save();
-                this.ctx.shadowColor = 'rgba(100, 200, 255, 0.6)';
-                this.ctx.shadowBlur = 10;
-                this.ctx.drawImage(this.images['bubble'], bubble.x, bubble.y, bubble.width, bubble.height);
-                this.ctx.restore();
-            }
+            this.ctx.save();
+            this.ctx.shadowColor = 'rgba(100, 200, 255, 0.6)';
+            this.ctx.shadowBlur = 10;
+            this.ctx.fillText(this.emojiMap['bubble'], bubble.x + bubble.width / 2, bubble.y + bubble.height / 2);
+            this.ctx.restore();
         });
     }
 
@@ -134,14 +136,16 @@ class Renderer {
      * @param {Array<GameObject>} obstacles - Array de obstáculos
      */
     drawObstacles(obstacles) {
+        this.ctx.font = '40px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+
         obstacles.forEach(obstacle => {
-            if (this.images['rock']) {
-                this.ctx.save();
-                this.ctx.shadowColor = 'rgba(150, 150, 150, 0.5)';
-                this.ctx.shadowBlur = 15;
-                this.ctx.drawImage(this.images['rock'], obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-                this.ctx.restore();
-            }
+            this.ctx.save();
+            this.ctx.shadowColor = 'rgba(150, 150, 150, 0.5)';
+            this.ctx.shadowBlur = 15;
+            this.ctx.fillText(this.emojiMap['rock'], obstacle.x + obstacle.width / 2, obstacle.y + obstacle.height / 2);
+            this.ctx.restore();
         });
     }
 
@@ -150,8 +154,12 @@ class Renderer {
      * @param {Array<GameObject>} monsters - Array de monstros
      */
     drawMonsters(monsters) {
+        this.ctx.font = '50px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+
         monsters.forEach(monster => {
-            if (monster.visible && this.images[monster.type]) {
+            if (monster.visible) {
                 this.ctx.save();
 
                 // Cores de bioluminescência
@@ -169,9 +177,9 @@ class Renderer {
                 if (monster.type === 'squid') {
                     this.ctx.translate(monster.x + monster.width, monster.y);
                     this.ctx.scale(-1, 1);
-                    this.ctx.drawImage(this.images['squid'], 0, 0, monster.width, monster.height);
+                    this.ctx.fillText(this.emojiMap[monster.type], 0 - monster.width / 2, monster.y + monster.height / 2);
                 } else {
-                    this.ctx.drawImage(this.images[monster.type], monster.x, monster.y, monster.width, monster.height);
+                    this.ctx.fillText(this.emojiMap[monster.type], monster.x + monster.width / 2, monster.y + monster.height / 2);
                 }
 
                 this.ctx.restore();
@@ -217,8 +225,6 @@ class Renderer {
      * @param {Submarine} submarine - O submarino
      */
     drawSubmarine(submarine) {
-        if (!this.images['submarine']) return;
-
         const center = submarine.getScreenCenter();
 
         this.ctx.save();
@@ -237,16 +243,13 @@ class Renderer {
         this.ctx.closePath();
         this.ctx.fill();
 
-        // Desenhar submarino com brilho
+        // Desenhar submarino com brilho (agora emoji)
         this.ctx.shadowColor = 'rgba(255, 255, 100, 0.6)';
         this.ctx.shadowBlur = 12;
-        this.ctx.drawImage(
-            this.images['submarine'],
-            -submarine.width / 2,
-            -submarine.height / 2,
-            submarine.width,
-            submarine.height
-        );
+        this.ctx.font = '60px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText(this.emojiMap['submarine'], 0, 0);
 
         this.ctx.restore();
     }
@@ -363,7 +366,8 @@ class Renderer {
      * @returns {boolean}
      */
     imagesLoaded() {
-        return Object.keys(this.images).length === 7;
+        // Sempre retorna true, pois não dependemos mais de imagens
+        return true;
     }
 
     /**
