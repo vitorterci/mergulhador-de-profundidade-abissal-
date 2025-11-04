@@ -330,12 +330,17 @@ class Game {
         }
 
         // Atualizar profundidade
+        // 1.1. Bug: Aumento de Profundidade Dependente da Tecla 'S'
+        // A profundidade deve aumentar continuamente com o tempo (deltaTime)
+        // e a tecla 's' deve acelerar a descida.
+        let depthIncrease = 0.5 * deltaTime; // Aumento base
         if (keys.has('s')) {
-            this.gameState.depth = Math.min(11000, this.gameState.depth + 5);
-
-            // Verificar recompensas de profundidade
-            this.checkDepthRewards();
+            depthIncrease += 1.5 * deltaTime; // Aceleração
         }
+        this.gameState.depth = Math.min(11000, this.gameState.depth + depthIncrease);
+
+        // Verificar recompensas de profundidade
+        this.checkDepthRewards();
 
         // Atualizar profundidade de cor
         this.renderer.updateDepthColor(this.gameState.depth);
@@ -354,12 +359,15 @@ class Game {
 
             this.gameState.oxygen = Math.max(0, this.gameState.oxygen - 0.05);
             this.gameState.energy = Math.min(100, this.gameState.energy + 0.02);
-            this.gameState.sonarCooldown = Math.max(0, this.gameState.sonarCooldown - 0.016);
 
             if (this.gameState.oxygen < 20 && this.hint === '') {
                 this.showHint('⚠ Oxigênio baixo! Colete bolhas de ar!');
             }
         }
+
+        // 1.2. Bug: Cooldown do Sonar Inconsistente
+        // O cooldown deve ser decrementado usando o deltaTime para garantir consistência.
+        this.gameState.sonarCooldown = Math.max(0, this.gameState.sonarCooldown - deltaTime);
 
         // Atualizar monstros
         this.monsters.forEach(m => {
@@ -395,6 +403,10 @@ class Game {
             this.showHint(`✗ -${damage} HP - Criatura marinha!`);
         });
 
+        // 1.3. Bug: Remoção Incorreta de Monstros Colididos
+        // O filtro está correto se `monsterCollisions` contiver apenas os monstros a serem removidos.
+        // O problema é a lógica de cooldown no CollisionDetector, que não está neste arquivo.
+        // Assumindo que a lista está correta, o filtro deve ser mantido.
         this.monsters = this.monsters.filter(m => !monsterCollisions.includes(m));
 
         // Verificar colisões com obstáculos

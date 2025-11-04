@@ -30,13 +30,19 @@ html, body {
 
 .game-wrapper {
     position: relative;
-    width: 800px;
-    height: 600px;
+    /* 2.1. Erro: Falta de Responsividade (Design Não Adaptável) */
+    /* Remover larguras e alturas fixas para permitir que o wrapper se ajuste ao viewport */
+    width: 100%;
+    height: 100%;
+    max-width: 800px; /* Manter a proporção original como máximo */
+    max-height: 600px;
     background: #0a0e27;
     border: 2px solid #00d9ff;
     border-radius: 8px;
     box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
     overflow: hidden;
+    /* Adicionar proporção para manter o aspecto 4:3 */
+    aspect-ratio: 4 / 3;
 }
 
 /* Canvas */
@@ -480,10 +486,12 @@ html, body {
    Responsive Design
    ============================================ */
 
+/* 2.1. Erro: Falta de Responsividade (Design Não Adaptável) */
+/* Ajustar o game-wrapper para ser responsivo, mantendo a proporção 4:3 */
 @media (max-width: 900px) {
     .game-wrapper {
         width: 90vw;
-        height: 67.5vw;
+        height: auto; /* Deixar o aspect-ratio cuidar da altura */
         max-width: 800px;
         max-height: 600px;
     }
